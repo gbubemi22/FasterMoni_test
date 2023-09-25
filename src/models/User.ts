@@ -1,5 +1,3 @@
-
-
 /*************************************************************************
 USERS TABLE
 *************************************************************************/
@@ -48,9 +46,21 @@ export default function (sequelize: any, Sequelize: any) {
   );
 
   Users.associate = function (models: any) {
-
-  models.users.hasOne(models.wallets, { onDelete: 'cascade', targetKey: 'id', foreignKey: 'userId' });
-  }
+    models.users.hasOne(models.wallets, {
+      onDelete: "cascade",
+      targetKey: "id",
+      foreignKey: "userId",
+    });
+    models.users.hasOne(models.pins, {
+      onDelete: "cascade",
+      targetKey: "id",
+      foreignKey: "userId",
+    });
+    models.users.hasMany(models.donations, {
+      onDelete: "cascade",
+      targetKey: "id",
+      foreignKey: "userId",
+    });
+  };
   return Users;
 }
-

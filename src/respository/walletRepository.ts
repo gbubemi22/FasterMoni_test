@@ -19,6 +19,31 @@ const WallerRepository = {
 
     return wallet;
   },
+  updatDonorWallet: async(userId: number, amount: number) => {
+    const walletUpdate = await DB.wallets.findOne({
+      where: { userId },
+    })
+
+    walletUpdate.balance -= amount;
+
+    // Save the updated wallet to the database
+    await walletUpdate.save();
+
+    return walletUpdate;
+  },
+
+  updatBrneficiaryWallet: async(userId: number, amount: number) => {
+    const walletUpdate = await DB.wallets.findOne({
+      where: { userId },
+    })
+
+    walletUpdate.balance += amount;
+
+    // Save the updated wallet to the database
+    await walletUpdate.save();
+
+    return walletUpdate;
+  },
 
   
 };
