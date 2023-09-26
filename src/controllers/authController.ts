@@ -6,6 +6,7 @@ import { comparePassword, hashPassword } from "../utils/password";
 import jwt from "jsonwebtoken";
 import userSchema from "../validations/validation";
 import WallerRepository from "../respository/walletRepository";
+import sendEmail from "../utils/sendEmail";
 
 const AuthController = {
   createUser: async (req: Request, res: Response): Promise<Response> => {
@@ -51,9 +52,9 @@ const AuthController = {
     };
 
     const userId = createdUser.id;
-    const walletName = createdUser.first_name
+    const walletName = createdUser.first_name;
 
-    await WallerRepository.CreateWallet(userId,walletName);
+    await WallerRepository.CreateWallet(userId, walletName);
 
     return res.status(StatusCodes.CREATED).json({
       message: "Account created successfully",
@@ -92,5 +93,35 @@ const AuthController = {
     });
   },
 };
+
+const checkDonationMilestones = async () => {
+  try {
+    // Query users who reached the milestone (e.g., reached 2 donations)
+    const milestone = 2; // Define your milestone
+    const usersToThank = await UserRepository.getUsersWithDonationMilestone(
+      milestone
+    );
+
+    if (usersToThank.length === 0) {
+      console.log("No users reached the milestone.");
+      return;
+    }
+
+    const message = "Thank you for reaching this milestone!";
+
+    // Send thank you messages to users
+    for (const user of usersToThank) {
+      await sendEmail(user.email, "Thank You", message);
+      console.log(`Thank you email sent to ${user.email}`);
+    }
+  } catch (error) {
+    console.error("Error checking donation milestones:", error);
+  }
+};
+
+// Run the checkDonationMilestones function once a day (24 hours)
+setInterval(checkDonationMilestones, 24 * 60 * 60 * 1000);
+
+checkDonationMilestones();
 
 export default AuthController;

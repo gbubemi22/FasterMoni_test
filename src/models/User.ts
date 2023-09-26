@@ -29,6 +29,10 @@ export default function (sequelize: any, Sequelize: any) {
         allowNull: false,
         unique: true,
       },
+      donationCount: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0, 
+      },
 
       type: {
         type: Sequelize.ENUM("admin", "user"),

@@ -1,57 +1,44 @@
-// import nodemailer, { Transporter } from 'nodemailer';
-// import { PrepareMailDataType, SendMailDataType } from '../helpers/types';
-// import { configs } from '../config';
+import nodemailer, { Transporter } from "nodemailer";
 
-// const sendEmail = async (data: SendMailDataType) => {
-//   try {
-//     const transporter: Transporter = nodemailer.createTransport({
-//       host: configs.HOST || 'smtp-pulse.com',
-//        //service: configs.SERVICE,
-//       port:  587,
-//       secure: false,
-//       auth: {
-//         user: configs.USER,
-//         pass: configs.PASS,
-//       },
-//       tls: {
-//         ciphers: "SSLv3",
-//       },
-    
-//     });
+// Create a transporter using async/await
+const createTransporter = async () => {
+  try {
+    const transporter = nodemailer.createTransport({
+      host: process.env.HOST,
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.USER,
+        pass: process.env.PASS,
+      },
+    });
 
-//     const msg = {
-//       from: `${data.senderName} <${data.senderEmail}>`,
-//       to: data.mailRecipients,
-//       subject: data.mailSubject,
-//       html: data.mailBody,
-//     };
+    // Verify the transporter
+    await transporter.verify();
 
-//     await transporter.sendMail(msg);
-//     console.log('Email sent successfully');
-//   } catch (error) {
-//     console.log('Failed to send email');
-//     console.log(error);
-//     return { status: 'error', message: 'Failed to send email' };
-//   }
+    return transporter;
+  } catch (error) {
+    console.error("Error creating email transporter:", error);
+    throw error;
+  }
+};
 
-//   return { status: 'success', message: 'Email sent successfully' };
-// };
+// Function to send an email
+const sendEmail = async (email: string, subject: string, text: string) => {
+  try {
+    const transporter = await createTransporter();
 
-// export default sendEmail;
+    const info = await transporter.sendMail({
+      from: `"FASTMONI" ${process.env.USER}`,
+      to: email,
+      subject: subject,
+      text: text,
+    });
 
-// export const prepareMail = async ({
-//   mailRecipients,
-//   mailSubject,
-//   mailBody,
-//   senderName,
-//   senderEmail,
-// }: PrepareMailDataType) => {
-//   const _sendMail: any = await sendEmail({
-//     senderName,
-//     senderEmail,
-//     mailRecipients,
-//     mailSubject,
-//     mailBody,
-//   });
-//   return { status: 'error', message: 'Failed to send email' };
-// };
+    console.log("Email sent successfully:", info.response);
+  } catch (error) {
+    console.error("Email not sent:", error);
+  }
+};
+
+export default sendEmail;
