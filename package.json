@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npm run build && nodemon dist/app.js",
     "build": "tsc --project tsconfig.json ",
-    "start": "node dist/app.js",
+    "start": "npm run build && node dist/app.js",
     "test:load": "artillery run load-test.yml"
   },
   "author": "gbubemi",
