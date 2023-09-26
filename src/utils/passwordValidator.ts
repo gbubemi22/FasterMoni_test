@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-import { Response } from 'request';
+import { Response } from 'express';
 
 const validatePasswordString = (password: string): any | Response => {
      const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$/;
