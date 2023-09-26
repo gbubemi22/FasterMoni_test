@@ -1,10 +1,33 @@
 config:
-  target: 'http://localhost:3000'  # Replace with your API URL
+  target: 'http://localhost:5001' 
   phases:
-    - duration: 30  # Test duration in seconds
-      arrivalRate: 100  # Requests per second
+    - duration: 30
+      arrivalRate: 100 
+  defaults:
+    headers:
+      User-Agent: 'Artillery'
 scenarios:
   - flow:
-      - get:
-          url: '/api/endpoint'  # Replace with your API endpoint
-  # Add more scenarios for other endpoints or operations
+      - post: # Signup user
+          url: '/api/v1/auth/signup'
+          json:
+            first_name: 'testuser'
+            last_name: 'lasttest'
+            email: 'testuser@example.com'
+            number: '05043222222'
+            password: 'password123@'
+      - post: # Login
+          url: '/api/v1/auth/login'
+          json:
+            email: 'testuser@example.com'
+            password: 'password123@'
+      - get: # Donation
+          url: '/api/v1/donations/1'
+      - get: # Wallet
+          url: '/api/v1/wallet/1'
+      - post: # Transaction Pin
+          url: '/api/v1/pins/1'
+          json:
+            
+            pin: '5104' 
+            

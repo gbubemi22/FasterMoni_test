@@ -19,6 +19,7 @@ import xss from "xss-clean";
 import authRouter from "./routers/AuthRouter";
 import walletRouter from "./routers/WalletRouter";
 import pinRouter from "./routers/PinRouter";
+import DonationRouter from "./routers/DonationRouter";
 
 app.use(cors());
 app.use(morgan("dev"));
@@ -52,7 +53,7 @@ app.get("/", (req, res) => {
 
 //USE ROUTES
 
-app.use(authRouter, walletRouter, pinRouter);
+app.use(authRouter, walletRouter, pinRouter, DonationRouter);
 
 //ErrorHandlerMiddleware
 import notFoundMiddleware from "./middleware/not-found";
