@@ -1,0 +1,10 @@
+config:
+  target: 'http://localhost:3000'  # Replace with your API URL
+  phases:
+    - duration: 30  # Test duration in seconds
+      arrivalRate: 100  # Requests per second
+scenarios:
+  - flow:
+      - get:
+          url: '/api/endpoint'  # Replace with your API endpoint
+  # Add more scenarios for other endpoints or operations

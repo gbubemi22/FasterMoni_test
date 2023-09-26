@@ -4,10 +4,11 @@
   "description": "",
   "main": "app.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+   
     "dev": "npm run build && nodemon dist/app.js",
     "build": "tsc --project tsconfig.json ",
-    "start": "node dist/app.js"
+    "start": "node dist/app.js",
+    "test:load": "artillery run load-test.yml"
   },
   "author": "gbubemi",
   "license": "ISC",
@@ -47,6 +48,7 @@
     "@types/node": "^20.6.5",
     "@types/nodemailer": "^6.4.11",
     "@types/request": "^2.48.8",
+    "artillery": "^2.0.0-37",
     "nodemon": "^3.0.1"
   }
 }
