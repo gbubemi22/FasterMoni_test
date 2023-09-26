@@ -43,6 +43,9 @@ const WalletController = {
 
     return res.status(StatusCodes.OK).json(wallet);
   },
+  get: async(req: Request, res: Response)=> {
+
+  },
 };
 
 export default WalletController;
