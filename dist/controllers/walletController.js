@@ -44,6 +44,7 @@ const WalletController = {
         return res.status(http_status_codes_1.StatusCodes.OK).json(wallet);
     }),
     get: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        const userId = parseInt(req.params.userId, 10);
     }),
 };
 exports.default = WalletController;

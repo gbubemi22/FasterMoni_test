@@ -44,7 +44,7 @@ const WalletController = {
     return res.status(StatusCodes.OK).json(wallet);
   },
   get: async(req: Request, res: Response)=> {
-
+    const userId = parseInt(req.params.userId, 10);
   },
 };
 
