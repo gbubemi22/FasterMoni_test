@@ -16,6 +16,9 @@ Table of Contents
         .Get Donations in a Period
         .Process a Donation
 
+
+   Deployed to render::::  https://fast-moni.onrender.com     
+
 1. Technology Stack
 
     Node.js - Server-Side JavaScript Runtime
@@ -52,36 +55,38 @@ JWT Authentication
     Token Inclusion: To authenticate API requests, clients include the JWT token in the Authorization header of their HTTP requests.
 
 4. How to Run Locally
+  
+[npm run dev]
 
-[Provide instructions on how to run your API locally.]
 5. API Endpoints
 User Registration and Creating Wallets
 
-[Documentation for user registration and wallet creation endpoints.]
+
+
+POST [http://localhost:5001/api/v1/auth/register]
 User Login
 
-[Documentation for user login endpoint.]
+POST [http://localhost:5001/api/v1/auth/login]
+
+
 Create Wallet
 
-[Documentation for creating a wallet endpoint.]
+POST [http://localhost:5001/api/v1/wallets/2]
+
+
 Set Transaction PIN
 
-[Documentation for setting a transaction PIN endpoint.]
+[http://localhost:5001/api/v1/pins/2]
+Documentation for setting a transaction PIN endpoint.
+
 Create Donation
 
-[Documentation for creating a donation endpoint.]
+[http://localhost:5001/api/v1/donations/2]
 Get Donation Counts
 
-[Documentation for getting donation counts endpoint.]
-Get Single Donation
 
-[Documentation for getting a single donation endpoint.]
-Get Donations in a Period
+POSTMAN DOC https://documenter.getpostman.com/view/29600681/2s9YJXakHX
 
-[Documentation for getting donations within a specified time period.]
-Process a Donation
-
-[Documentation for processing a donation endpoint.]
 
 This adjusted overview includes section headings and a structured format to make it easier for readers to navigate and understand your "Donation Processing API." You can fill in the specific details and 
 

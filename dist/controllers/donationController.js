@@ -18,35 +18,48 @@ const walletRepository_1 = __importDefault(require("../respository/walletReposit
 const donationRepository_1 = __importDefault(require("../respository/donationRepository"));
 const DonationController = {
     createDonation: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const userId = parseInt(req.params.userId, 10);
-        const { beneficiaryId, amount } = req.body;
-        const checkUser = yield userRepository_1.default.getUserById(userId);
-        if (!checkUser)
-            return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).json({
-                message: "User not found",
+        try {
+            const userId = parseInt(req.params.userId, 10);
+            const { beneficiaryId, amount } = req.body;
+            const checkUser = yield userRepository_1.default.getUserById(userId);
+            if (!checkUser) {
+                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).json({
+                    message: "User not found",
+                });
+            }
+            const beneficiaryUser = yield userRepository_1.default.getUserById(beneficiaryId);
+            if (!beneficiaryUser) {
+                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).json({
+                    message: "Beneficiary User not found",
+                });
+            }
+            // Check if user has enough balance
+            const checkBalance = yield walletRepository_1.default.getWalletByUserId(userId);
+            if (checkBalance.balance < amount) {
+                return res.status(http_status_codes_1.StatusCodes.BAD_REQUEST).json({
+                    message: "Insufficient balance",
+                });
+            }
+            // Deduct amount
+            const deductedAmount = checkBalance.balance -= amount;
+            yield checkBalance.save();
+            yield walletRepository_1.default.updatBrneficiaryWallet(beneficiaryId, amount);
+            const donation = yield donationRepository_1.default.CreateDonation(userId, beneficiaryId, amount);
+            // Update donation counts for both donor and beneficiary
+            yield userRepository_1.default.updateDonorCount(userId);
+            yield userRepository_1.default.updateBeneficiaryCount(beneficiaryId);
+            res.status(http_status_codes_1.StatusCodes.OK).json({
+                message: "Donation created successfully",
+                donation,
             });
-        const beneficiaryUser = yield userRepository_1.default.getUserById(beneficiaryId);
-        if (!beneficiaryUser)
-            return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).json({
-                message: "beneficiary User not found",
-            });
-        //  check if user as enough balance
-        const checkBalance = yield walletRepository_1.default.getWalletByUserId(userId);
-        if (checkBalance.balance < amount) {
-            throw new Error(`You dont have enough balance`);
         }
-        //deccute amount
-        const deductedAmount = -amount;
-        yield walletRepository_1.default.updatDonorWallet(userId, deductedAmount);
-        yield walletRepository_1.default.updatBrneficiaryWallet(beneficiaryId, amount);
-        const donation = yield donationRepository_1.default.CreateDonation(userId, beneficiaryId, amount);
-        // Update donation counts for both donor and beneficiary
-        yield userRepository_1.default.updateDonorCount(userId);
-        yield userRepository_1.default.updateBeneficiaryCount(beneficiaryId);
-        res.status(http_status_codes_1.StatusCodes.OK).json({
-            message: "Donation created successfully",
-            donation,
-        });
+        catch (error) {
+            console.error("Error in createDonation:", error);
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).json({
+                message: "An error occurred while processing the donation.",
+                error: error,
+            });
+        }
     }),
     checkDonationsMade: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const userId = parseInt(req.params.userId, 10);

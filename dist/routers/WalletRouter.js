@@ -11,7 +11,7 @@ router
     .post(walletController_1.default.createWallet);
 router
     .route('/:userId')
-    .post(walletController_1.default.createWallet);
+    .get(walletController_1.default.getWallet);
 // Add the prefix to all routes
 const prefix = '/api/v1/wallets';
 router.use(prefix, router);

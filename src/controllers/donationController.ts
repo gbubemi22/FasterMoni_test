@@ -6,54 +6,57 @@ import DonationRepository from "../respository/donationRepository";
 
 const DonationController = {
   createDonation: async (req: Request, res: Response) => {
-    const userId = parseInt(req.params.userId, 10);
-
-    const { beneficiaryId, amount } = req.body;
-    const checkUser = await UserRepository.getUserById(userId);
-
-    if (!checkUser)
-      return res.status(StatusCodes.NOT_FOUND).json({
-        message: "User not found",
+    try {
+      const userId = parseInt(req.params.userId, 10);
+      const { beneficiaryId, amount } = req.body;
+      
+      const checkUser = await UserRepository.getUserById(userId);
+      if (!checkUser) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: "User not found",
+        });
+      }
+      
+      const beneficiaryUser = await UserRepository.getUserById(beneficiaryId);
+      if (!beneficiaryUser) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: "Beneficiary User not found",
+        });
+      }
+      
+      // Check if user has enough balance
+      const checkBalance = await WallerRepository.getWalletByUserId(userId);
+      if (checkBalance.balance < amount) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message: "Insufficient balance",
+        });
+      }
+      
+      // Deduct amount
+      const deductedAmount = checkBalance.balance -= amount;
+      await checkBalance.save()
+      
+      await WallerRepository.updatBrneficiaryWallet(beneficiaryId, amount);
+      
+      const donation = await DonationRepository.CreateDonation(userId, beneficiaryId, amount);
+      
+      // Update donation counts for both donor and beneficiary
+      await UserRepository.updateDonorCount(userId);
+      await UserRepository.updateBeneficiaryCount(beneficiaryId);
+      
+      res.status(StatusCodes.OK).json({
+        message: "Donation created successfully",
+        donation,
       });
-
-    const beneficiaryUser = await UserRepository.getUserById(beneficiaryId);
-
-    if (!beneficiaryUser)
-      return res.status(StatusCodes.NOT_FOUND).json({
-        message: "beneficiary User not found",
+    } catch (error) {
+      console.error("Error in createDonation:", error);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: "An error occurred while processing the donation.",
+        error: error,
       });
-
-    //  check if user as enough balance
-
-    const checkBalance = await WallerRepository.getWalletByUserId(userId);
-
-    if (checkBalance.balance < amount) {
-      throw new Error(`You dont have enough balance`);
     }
-
-    //deccute amount
-
-    const deductedAmount = -amount;
-
-    await WallerRepository.updatDonorWallet(userId, deductedAmount);
-
-    await WallerRepository.updatBrneficiaryWallet(beneficiaryId, amount);
-
-    const donation = await DonationRepository.CreateDonation(
-      userId,
-      beneficiaryId,
-      amount
-    );
-
-    // Update donation counts for both donor and beneficiary
-    await UserRepository.updateDonorCount(userId);
-    await UserRepository.updateBeneficiaryCount(beneficiaryId);
-
-    res.status(StatusCodes.OK).json({
-      message: "Donation created successfully",
-      donation,
-    });
   },
+  
 
   checkDonationsMade: async (req: Request, res: Response) => {
     const userId = parseInt(req.params.userId, 10);

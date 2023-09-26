@@ -12,7 +12,7 @@ router
 
 router
 .route('/:userId')
-.post(WalletController.createWallet)
+.get(WalletController.getWallet)
 
 
 
