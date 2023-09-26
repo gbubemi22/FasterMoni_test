@@ -1,5 +1,5 @@
 name: fast-moni
 type: web
 buildCommand: tsc --project tsconfig.json
-startCommand: node dist/app.js 
+startCommand: npm run build && node dist/app.js 
 directory: src
